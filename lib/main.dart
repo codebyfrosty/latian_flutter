@@ -1,12 +1,29 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-// import 'package:flutter_complete_guide/modul.dart';
-import 'package:flutter_complete_guide/result.dart';
-import './halUtama.dart';
+// import 'package:hexcolor/hexcolor.dart';
 
-import './quiz.dart';
+import './home.dart';
 
 void main() {
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('assets/fonts/Fredoka_One/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
+
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('assets/fonts/Nunito/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
+  // add these lines
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  
+  
+  
+  // run app
   runApp(MyApp());
 }
 
@@ -15,117 +32,36 @@ void main() {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
+    // ignore: todo
     // TODO: implement createState
     return MyAppState();
   }
 }
 
 class MyAppState extends State<MyApp> {
-  void resetQuiz() {
-    setState(() {
-      questionIndex = 0;
-      totalscore = 0;
-    });
-  }
-
-  final questions = const [
-    {
-      'questionText': 'Apa makanan kesukaan mu?',
-      'answers': [
-        {'text': 'Magelangan', 'score': 1},
-        {'text': 'Nasi Tumpang', 'score': 2},
-        {'text': 'Ayam Goreng', 'score': 3}
-      ],
-    },
-    {
-      'questionText': 'Apa minuman kesukaan mu?',
-      'answers': [
-        {'text': 'Es Teh Manis', 'score': 1},
-        {'text': 'Coca cola', 'score': 2},
-        {'text': 'Kopi Kapal Api', 'score': 3}
-      ],
-    },
-    {
-      'questionText': 'Apa hobi mu?',
-      'answers': [
-        {'text': 'Main Game', 'score': 1},
-        {'text': 'Main Futsal', 'score': 2},
-        {'text': 'Jalan-jalan', 'score': 3}
-      ],
-    },
-  ];
-
-  var questionIndex = 0;
-  var totalscore = 0;
-  // var count = 0;
-  void _answerQuestion(int score) {
-    totalscore = totalscore + score;
-    // totalscore += score;
-
-    if (questionIndex < questions.length) {
-      print('We have more questions!');
-    }
-
-    setState(() {
-      // count = count + 1;
-      questionIndex = questionIndex + 1;
-    });
-
-    // print('Answer Chonsen!');
-    print(questionIndex);
-  }
-
-  bool showQuiz = false;
-  bool showModul = false;
-  bool showUtama = true;
-
-  void balikmenu() {
-    setState(() {
-      showQuiz = false;
-      showUtama = true;
-      questionIndex = 0;
-      totalscore = 0;
-    });
-  }
-
-  Widget quizLogic() {
-    return questionIndex < questions.length
-        ? Quiz(questions, _answerQuestion, questionIndex)
-        : Result(totalscore, resetQuiz, balikmenu);
-    // print(questionIndex);
-  }
-
-  void operatorModul() {
-    setState(() {
-      showModul = true;
-      showQuiz = false;
-      showUtama = false;
-    });
-  }
-
-  void operatorQuiz() {
-    setState(() {
-      showModul = false;
-      showQuiz = true;
-      showUtama = false;
-      print('clicked');
-    });
-  }
+  Color _appbarBG = const Color.fromRGBO(193, 52, 47, 1);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        theme: ThemeData(accentColor: _appbarBG, fontFamily: 'Nunito'),
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
-            appBar: AppBar(
-              title: Text('Quiz App'),
+          appBar: AppBar(
+            backgroundColor: _appbarBG,
+            elevation: 0,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: 38,
+                ),
+              ],
             ),
-            body: Utama(
-              operatorModul: operatorModul,
-              operatorQuiz: operatorQuiz,
-              quizLogic: quizLogic(),
-              showModul: showModul,
-              showQuiz: showQuiz,
-              showUtama: showUtama,
-            )));
+          ),
+          body: Home(),
+          // drawer: Drawer(),
+        ));
   }
 }
